@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>每日心情小天使・三張牌塔羅</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1d1a3a;--panel:#2a2650;--gold:#e8cf9a;--rose:#d9899f;--text:#f3ecd9;--dim:#9a94c4}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Serif TC","Songti TC",serif;line-height:1.7;padding:max(20px,env(safe-area-inset-top)) 16px max(28px,env(safe-area-inset-bottom))}
+main{max-width:480px;margin:0 auto}
+h1{font-size:26px;margin:8px 0 2px;color:var(--gold);letter-spacing:.08em}
+h2{font-size:18px;margin:0 0 12px;color:var(--gold)}
+.sub,.hint,.note{color:var(--dim);font-size:14px}.sub{margin:0 0 20px}.note{font-size:12px;text-align:center;margin-top:20px}
+[hidden]{display:none!important}
+.qs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{font:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--rose);outline-offset:2px}
+.qb{background:var(--panel);color:var(--text);border:1px solid #3d3873;border-radius:12px;padding:16px 8px;font-weight:700}
+.qb span{display:block;font-size:26px}
+.q{color:var(--rose);font-weight:700;text-align:center;margin:0 0 6px}
+.deck{position:relative;width:110px;height:164px;margin:26px auto 30px}
+.sheet,.b{border:1px solid var(--gold);border-radius:8px;background:radial-gradient(circle at 50% 35%,#3a3470,#262250)}
+.sheet{position:absolute;inset:0;transform:translate(calc(var(--i)*1.5px),calc(var(--i)*-1.5px))}
+.sheet::after,.b::after{content:"✦";position:absolute;inset:0;display:grid;place-items:center;color:var(--gold);font-size:28px}
+@keyframes rl{0%,100%{transform:translate(calc(var(--i)*1.5px),calc(var(--i)*-1.5px))}35%{transform:translate(-78px,0) rotate(-8deg)}65%{transform:translate(78px,-10px) rotate(8deg)}}
+@keyframes lr{0%,100%{transform:translate(calc(var(--i)*1.5px),calc(var(--i)*-1.5px))}35%{transform:translate(78px,-10px) rotate(8deg)}65%{transform:translate(-78px,0) rotate(-8deg)}}
+.deck.shuffling .sheet:nth-child(odd){animation:rl .7s ease-in-out calc(var(--i)*70ms) 3}
+.deck.shuffling .sheet:nth-child(even){animation:lr .7s ease-in-out calc(var(--i)*70ms) 3}
+.btns{display:flex;gap:10px;justify-content:center;margin-top:14px}
+.btn,.btns a{padding:11px 22px;border-radius:8px;background:var(--gold);color:#2a2250;border:0;text-decoration:none;font-weight:700;text-align:center}
+.btn.ghost{background:none;color:var(--gold);border:1px solid var(--gold)}
+.btn:disabled{opacity:.5}
+.row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:16px 0}
+.rc{aspect-ratio:3/4.6;perspective:700px}
+.in{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .8s}
+.rc.show .in{transform:rotateY(180deg)}
+.b,.f{position:absolute;inset:0;backface-visibility:hidden;border-radius:8px}
+.f{transform:rotateY(180deg);background:var(--gold);color:#2a2250;border:1px solid #fff3d0}
+.c{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;padding:4px}
+.c.r{transform:rotate(180deg)}
+.g{font-size:28px;font-weight:700;line-height:1}.nm{font-weight:700;font-size:15px}.en{font-size:10px;opacity:.7;line-height:1.2}
+.lb{text-align:center;color:var(--gold);font-size:14px;margin-top:6px}.lb span{color:var(--rose);font-size:13px}
+.rd{background:var(--panel);border:1px solid #3d3873;border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.rd b{color:var(--gold)}.pos{color:var(--rose)}.kw{color:var(--dim);font-size:13px}.rd p{margin:6px 0 0}
+@media (prefers-reduced-motion:reduce){.deck.shuffling .sheet{animation:none}.in{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<h1>🔮 三張牌塔羅</h1>
+<p class="sub">78 張完整牌組・過去／現在／未來</p>
+
+<section id="s1"><h2>想問哪一類的問題？</h2><div class="qs" id="qs"></div></section>
+
+<section id="s2" hidden>
+  <p class="q" id="q2"></p>
+  <div class="deck" id="deck"></div>
+  <div class="btns"><button class="btn" id="go">洗牌</button></div>
+  <p class="hint" id="hint" style="text-align:center">心裡專注在你的問題上，然後按下洗牌。</p>
+</section>
+
+<section id="s3" hidden aria-live="polite">
+  <p class="q" id="q3"></p>
+  <div class="row" id="row"></div>
+  <div id="read" hidden></div>
+  <div class="btns"><a id="share" href="#">分享給朋友</a><button class="btn ghost" id="again">重新抽牌</button></div>
+</section>
+
+<p class="note">僅供娛樂參考，開心看看就好 ✨</p>
+</main>
+<script>
+const MAJ=[["愚者","The Fool","新開始、冒險","魯莽、猶豫"],["魔術師","The Magician","行動力、創造","分心、準備不足"],["女祭司","The High Priestess","直覺、沉靜","忽視直覺、壓抑"],["皇后","The Empress","豐盛、滋養","依賴、停滯"],["皇帝","The Emperor","秩序、責任","僵化、控制欲"],["教皇","The Hierophant","傳統、指引","盲從、打破常規"],["戀人","The Lovers","選擇、連結","失衡、摩擦"],["戰車","The Chariot","意志、前進","失控、方向不明"],["力量","Strength","勇氣、耐心","自我懷疑、洩氣"],["隱者","The Hermit","獨處、反思","孤立、逃避"],["命運之輪","Wheel of Fortune","轉機、順勢","不順、時機未到"],["正義","Justice","公平、誠實","偏頗、逃避責任"],["倒吊人","The Hanged Man","換位思考、暫停","拖延、不願放手"],["死神","Death","結束、重生","抗拒改變、難放下"],["節制","Temperance","平衡、調和","失衡、急躁"],["惡魔","The Devil","執著、誘惑","掙脫、覺醒"],["高塔","The Tower","突變、真相","延遲崩解、抗拒真相"],["星星","The Star","希望、療癒","失望、缺乏信心"],["月亮","The Moon","不安、直覺","迷霧散去、釋懷"],["太陽","The Sun","喜悅、成功","熱情減退"],["審判","Judgement","覺醒、回顧","自我批判、猶豫"],["世界","The World","完成、圓滿","未完成、停滯"]];
+const RK=[["王牌","Ace","新的開始、潛力","錯失時機、延遲"],["二","Two","抉擇、平衡","猶豫、失衡"],["三","Three","成長、合作","缺乏合作、延誤"],["四","Four","穩定、休整","停滯、不安"],["五","Five","衝突、挑戰","化解衝突、緩和"],["六","Six","和諧、前進","停滯、留戀過去"],["七","Seven","評估、堅持","懷疑、分心"],["八","Eight","行動、專注","倉促、受阻"],["九","Nine","接近完成、韌性","疲憊、過度擔憂"],["十","Ten","圓滿、重擔","卸下重擔、結束"],["侍者","Page","好奇、消息","不成熟、壞消息"],["騎士","Knight","行動、追求","衝動、拖延"],["皇后","Queen","成熟、照顧","情緒化、過度付出"],["國王","King","掌控、成就","專橫、失控"]];
+const SU=[["權杖","Wands","🔥","行動與熱情"],["聖杯","Cups","🏆","情感與關係"],["寶劍","Swords","⚔️","思考與溝通"],["錢幣","Pentacles","🪙","金錢與現實"]];
+const ROM=["0","I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX","XXI"];
+const C=[
+{n:"感情與關係",e:"💞",lead:"在感情與關係裡",up:"順著這份能量，真誠表達並留意對方的感受。",rev:"先放慢腳步，檢視溝通與期待，別急著下結論。",sum:"感情沒有標準答案，真誠與溝通是最好的指南。"},
+{n:"工作與職涯",e:"💼",lead:"在工作與職涯上",up:"把握這股動能，設定具體的下一步並付諸行動。",rev:"留意卡關與分心之處，重整優先順序再前進。",sum:"職涯是長跑，一步一步累積就會看見方向。"},
+{n:"學業與目標",e:"📚",lead:"在學業與目標上",up:"保持節奏，把大目標拆成可完成的小步驟。",rev:"調整方法與步調，別用壓力逼自己，先補強弱點。",sum:"目標貴在持續，找到適合自己的節奏最重要。"},
+{n:"自我探索與情緒",e:"🌙",lead:"在自我探索與情緒上",up:"接納此刻的感受，把這份力量當作成長的養分。",rev:"溫柔對待自己，給情緒一點空間，必要時向信任的人傾訴。",sum:"你的感受都值得被看見，慢慢來就好。"}];
+const P=["過去","現在","未來"];
+const D=[];
+MAJ.forEach((m,i)=>D.push({name:m[0],en:m[1],up:m[2],rev:m[3],g:ROM[i]}));
+SU.forEach(s=>RK.forEach(r=>D.push({name:s[0]+r[0],en:r[1]+" of "+s[1],up:s[3]+"：" +r[2],rev:r[3],g:s[2]})));
+
+const $=id=>document.getElementById(id);
+const rnd=n=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n};
+const k1=s=>s.split("：").pop().split("、")[0];
+const calm=matchMedia("(prefers-reduced-motion:reduce)").matches;
+let cat=0,deck=[],phase=0;
+
+C.forEach((c,i)=>{const b=document.createElement("button");b.className="qb";b.innerHTML="<span>"+c.e+"</span>"+c.n;b.onclick=()=>{cat=i;start()};$("qs").appendChild(b)});
+for(let i=0;i<9;i++){const d=document.createElement("div");d.className="sheet";d.style.setProperty("--i",i);$("deck").appendChild(d)}
+
+function start(){
+  phase=0;$("go").textContent="洗牌";$("go").disabled=false;
+  $("hint").textContent="心裡專注在你的問題上，然後按下洗牌。";
+  $("q2").textContent=C[cat].e+" "+C[cat].n;
+  $("s1").hidden=true;$("s3").hidden=true;$("s2").hidden=false;
+}
+$("go").onclick=()=>{
+  if(phase===0){
+    deck=D.map((_,i)=>i);
+    for(let i=deck.length-1;i>0;i--){const j=rnd(i+1);[deck[i],deck[j]]=[deck[j],deck[i]]}
+    $("deck").classList.add("shuffling");$("go").disabled=true;$("hint").textContent="洗牌中…";
+    setTimeout(()=>{$("deck").classList.remove("shuffling");phase=1;$("go").disabled=false;$("go").textContent="抽三張牌";$("hint").textContent="牌已洗好，憑直覺按下抽牌。"},calm?500:2300);
+  }else draw();
+};
+function draw(){
+  const c=C[cat],pk=deck.slice(0,3).map(i=>({c:D[i],r:rnd(100)<40}));
+  $("q3").textContent=c.e+" "+c.n;
+  $("row").innerHTML=pk.map((p,i)=>'<div><div class="rc" id="rc'+i+'"><div class="in"><div class="b"></div><div class="f"><div class="c'+(p.r?" r":"")+'"><div class="g">'+p.c.g+'</div><div class="nm">'+p.c.name+'</div><div class="en">'+p.c.en+'</div></div></div></div></div><div class="lb">'+P[i]+"<br><span>"+(p.r?"逆位":"正位")+"</span></div></div>").join("");
+  $("read").hidden=true;$("s2").hidden=true;$("s3").hidden=false;
+  pk.forEach((_,i)=>setTimeout(()=>$("rc"+i).classList.add("show"),(calm?0:500)+i*(calm?0:700)));
+  const kws=pk.map(p=>p.r?p.c.rev:p.c.up);
+  $("read").innerHTML=pk.map((p,i)=>'<div class="rd"><b>'+P[i]+"｜"+p.c.name+' <span class="pos">'+(p.r?"逆位":"正位")+'</span></b><div class="kw">'+p.c.en+"｜"+kws[i]+"</div><p>"+c.lead+"，「"+p.c.name+"」"+(p.r?"逆位":"正位")+"象徵「"+kws[i]+"」。"+(p.r?c.rev:c.up)+"</p></div>").join("")+
+    '<div class="rd"><b>✨ 整體來看</b><p>從過去的「'+k1(kws[0])+"」，到現在的「"+k1(kws[1])+"」，邁向「"+k1(kws[2])+"」。"+c.sum+"</p></div>";
+  setTimeout(()=>{$("read").hidden=false},(calm?0:500)+2*(calm?0:700)+(calm?0:900));
+  const t="🔮 "+c.n+" 三張牌\n"+pk.map((p,i)=>P[i]+"："+p.c.name+(p.r?"（逆位）":"（正位）")).join("\n");
+  $("share").href="https://line.me/R/share?text="+encodeURIComponent(t+"\n"+location.href);
+}
+$("again").onclick=()=>{$("s3").hidden=true;$("s2").hidden=true;$("s1").hidden=false;window.scrollTo(0,0)};
+</script>
+</body>
+</html>
